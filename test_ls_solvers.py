@@ -159,9 +159,11 @@ def test2(option=2):
     diff2 = []
 
     if (option == 2):
-        steps = range(100,1000,100 ) + range(1000, 12000, 1000)
+        #steps = range(100,1000,100 ) + range(1000, 12000, 1000)
+        steps = range(1000, 120000, 1000)
     elif (option == 3):
-        steps = range(100,1000,100 ) + range(1000, 12000, 1000)
+        #steps = range(100,1000,100 ) + range(1000, 12000, 1000)
+        steps = range(1000, 120000, 1000)
     else:
         raise ValueError( "option = %s is not supported" % (option, ) )
 
@@ -172,12 +174,12 @@ def test2(option=2):
 
         if (option == 2):
             m = s
-            n = 2000 # Fixed second dimension
-            k = 1000 # Fixed rank
+            n = 500 #2000# Fixed second dimension
+            k = 480 #1000# Fixed rank
         elif (option == 3):
             n = s
-            m = 10000 # Fixed second dimension
-            k = 1000 # Fixed rank
+            m = 500 #10000# Fixed second dimension
+            k = 480 #1000# Fixed rank
 
         A =  10 * rnd.rand(m,k) - 5
         Temp =  10 * rnd.rand(k,n) - 5
@@ -217,17 +219,17 @@ def test2(option=2):
     res_dict = {'option': option,'steps': steps, 'times_1': times_1, 'times_2':  times_2,
                 'times_3': times_3, 'diff1': diff1,
                 'diff2': diff2 }
-    save_file_name = 'ls_test_%i_results.mat' % option
+    save_file_name = 'ls_test_%i_results.mat' % (option+3)
     io.savemat(save_file_name,  res_dict )
 
 
     plt.figure(1)
     if (option == 2):
         graph_title = 'Algorihms Speed Comparison 2 (fixed n,k)'
-        x_axis_title = 'Matrix m-size, n-size = 2000, rank = 1000 (if m>n )'
+        x_axis_title = 'Matrix m-size, n-size = %i, rank = %i (if m>n )' % (n,k )
     elif (option == 3):
         graph_title = 'Algorihms Speed Comparison 3 (fixed m,k)'
-        x_axis_title = 'Matrix n-size, m-size = 10000, rank = 1000 (if n>k )'
+        x_axis_title = 'Matrix n-size, m-size = %i, rank = %i (if n>k )' % (m,k)
 
     plt.title(graph_title, size = 18, weight = 'bold')
     plt.plot(steps, times_1, 'ro', label = 'Current Scipy (SVD) (gelss)')
@@ -238,7 +240,8 @@ def test2(option=2):
     plt.xlabel(x_axis_title, size = 15, weight = 'bold' )
 
     plt.legend(loc=2)
-    save_file_name = 'ls_test_%i_speeds.png' % option
+    save_file_name = 'ls_test_%i_speeds.png' % (option+3)
+    #plt.show()
     plt.savefig(save_file_name)
 
     plt.close()
@@ -257,9 +260,9 @@ def test2(option=2):
     plt.xlabel(x_axis_title, size = 15, weight = 'bold' )
 
     plt.legend(loc=2)
-    save_file_name = 'ls_test_%i_accuracies.png' % option
-    plt.show()
-    #plt.savefig(save_file_name)
+    save_file_name = 'ls_test_%i_accuracies.png' % (option+3)
+    #plt.show()
+    plt.savefig(save_file_name)
 
     return steps, times_1, times_2, times_3, diff1, diff2
 
@@ -267,4 +270,4 @@ def test2(option=2):
 if __name__ == '__main__':
     #test1()
     #test2(3)
-    test2(2)
+    test2(3)

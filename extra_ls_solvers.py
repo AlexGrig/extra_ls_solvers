@@ -23,9 +23,6 @@ import scipy.linalg as la
 from scipy.linalg.lapack import get_lapack_funcs
 from scipy.linalg.misc import LinAlgError, _datacopied
 
-
-
-
 def ls_scipy_current_solver(a, b, cond=None, overwrite_a=False, overwrite_b=False,
           check_finite=True):
     """
@@ -94,6 +91,9 @@ def ls_cof(a, b, cond=None, overwrite_a=False, overwrite_b=False,
         # If the LAPACK gelsy function is not found resort to the standart implementation
         return la.lstsq( a, b, cond, overwrite_a, overwrite_b, check_finite)
 
+    print gelsy.dtype
+    print type(gelsy.dtype)
+    ddt = gelsy.dtype
     if n > m:
         # need to extend b matrix as it will be filled with
         # a larger solution matrix
@@ -110,10 +110,10 @@ def ls_cof(a, b, cond=None, overwrite_a=False, overwrite_b=False,
 
     jptv = np.zeros( (n,1), dtype=np.int32 )
 
-    work = gelsy(a1, b1, jptv, lwork=-1)[4]
+    work = gelsy(a1, b1, jptv, np.finfo(gelsy.dtype).eps, -1)[4]
     lwork = work[0].real.astype(np.int)
     v, x, j, rank, work, info = gelsy(
-        a1, b1, jptv, cond=cond, lwork=lwork, overwrite_a=overwrite_a,
+        a1, b1, jptv, cond=np.finfo(gelsy.dtype).eps, lwork=lwork, overwrite_a=overwrite_a,
         overwrite_b=overwrite_b)
     # v - working matrix - A
     # x - solution
@@ -133,7 +133,7 @@ def ls_cof(a, b, cond=None, overwrite_a=False, overwrite_b=False,
         if rank == n:
             resids = np.sum(np.abs(x[n:])**2, axis=0)
         x = x1
-    return x, resids, rank, j
+    return x, resids, rank, j, ddt
 
 def ls_svdb(a, b, cond=None, overwrite_a=False, overwrite_b=False,
           check_finite=True):
